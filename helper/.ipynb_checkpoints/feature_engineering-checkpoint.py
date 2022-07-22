@@ -44,11 +44,8 @@ def feature_engineering(df):
     # Perform the normalization process for columns with numeric data type, except the price column
     cars_transformed[cars_transformed.select_dtypes('number').drop('price', axis=1).columns] = pd.DataFrame(normalize(X=cars_transformed.select_dtypes('number').drop('price', axis=1), norm='l2', axis=1), columns=cars_transformed.select_dtypes('number').drop('price', axis=1).columns)
     
-    # Perform the encoding process for columns of categorical data type
-    one_hot_encoders = preprocessing.OneHotEncoder()
-    one_hot_encoders.fit(cars_transformed[cars_transformed.select_dtypes('object').columns].values)
-    dum_ct = pd.DataFrame(one_hot_encoders.transform(cars_transformed[cars_transformed.select_dtypes('object').columns].values).toarray(), index = cars_transformed.index)
-    dum_ct.columns = one_hot_encoders.get_feature_names_out(cars_transformed.select_dtypes('object').columns)
-    cars_transformed = cars_transformed.join(dum_ct) 
+    # Perform the encoding process for columns of categorical data type using get dummies
+    cars_transformed = pd.get_dummies(cars_transformed, columns=cars_transformed.select_dtypes('object').columns)
+    cars_transformed
 
     return cars_transformed
